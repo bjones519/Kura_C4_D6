@@ -185,7 +185,7 @@ resource "aws_instance" "app_server01-west" {
   vpc_security_group_ids      = [module.ssh_security_group-west.security_group_id, module.app_service_sg-west.security_group_id]
   subnet_id                   = module.vpc-west.public_subnets[1]
   associate_public_ip_address = true
-  key_name                    = "pub-instance"
+  #key_name                    = "pub-instance"
   #depends_on = [aws_internet_gateway.gw]
 
   user_data = file("user_data.sh")
@@ -203,7 +203,7 @@ resource "aws_instance" "app_server02-west" {
   vpc_security_group_ids      = [module.ssh_security_group-west.security_group_id, module.app_service_sg-west.security_group_id]
   subnet_id                   = module.vpc-west.public_subnets[1]
   associate_public_ip_address = true
-  key_name                    = "pub-instance"
+  #key_name                    = "pub-instance"
   #depends_on = [aws_internet_gateway.gw]
 
   user_data = file("user_data.sh")
