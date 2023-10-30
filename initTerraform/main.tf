@@ -5,6 +5,13 @@ provider "aws" {
   region     = "us-east-1"
 
 }
+provider "aws" {
+  access_key = var.aws_access_key
+  secret_key = var.aws_secret_key
+  region     = "us-west-2"
+  alias      = "us-west-2"
+
+}
 
 #VPC in us-east-1
 module "vpc-east" {
@@ -13,9 +20,9 @@ module "vpc-east" {
   name = "Deployment6-us-east-vpc"
   cidr = "10.0.0.0/16"
 
-  azs             = ["us-east-1a", "us-east-1b"]
+  azs = ["us-east-1a", "us-east-1b"]
   #private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
-  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
+  public_subnets = ["10.0.101.0/24", "10.0.102.0/24"]
 
   tags = {
     Terraform = "true"
@@ -24,14 +31,17 @@ module "vpc-east" {
 
 #VPC in us-west-2
 module "vpc-west" {
+  providers = {
+    aws = aws.us-west-2
+  }
   source = "terraform-aws-modules/vpc/aws"
 
   name = "Deployment6-us-west-vpc"
   cidr = "10.0.0.0/16"
 
-  azs             = ["us-west-2a", "us-west-2b"]
+  azs = ["us-west-2a", "us-west-2b"]
   #private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
-  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
+  public_subnets = ["10.0.101.0/24", "10.0.102.0/24"]
 
   tags = {
     Terraform = "true"
@@ -40,15 +50,15 @@ module "vpc-west" {
 
 #SSH Security Group us-east VPC
 module "ssh_security_group-east" {
-  name        = "ssh"
-  source  = "terraform-aws-modules/security-group/aws//modules/ssh"
-  version = "~> 5.0"
-  vpc_id = module.vpc-east.vpc_id
+  name                = "ssh"
+  source              = "terraform-aws-modules/security-group/aws//modules/ssh"
+  version             = "~> 5.0"
+  vpc_id              = module.vpc-east.vpc_id
   ingress_cidr_blocks = ["0.0.0.0/0"]
 
   tags = {
     Terraform = "true"
-    Name= "Deployment5.1-ssh-sg-group"
+    Name      = "Deployment6-ssh-sg-group"
   }
 
 }
@@ -84,21 +94,27 @@ module "app_service_sg-east" {
 
 #SSH Security Group us-west VPC
 module "ssh_security_group-west" {
-  name        = "ssh"
-  source  = "terraform-aws-modules/security-group/aws//modules/ssh"
-  version = "~> 5.0"
-  vpc_id = module.vpc-west.vpc_id
+  providers = {
+    aws = aws.us-west-2
+  }
+  name                = "ssh"
+  source              = "terraform-aws-modules/security-group/aws//modules/ssh"
+  version             = "~> 5.0"
+  vpc_id              = module.vpc-west.vpc_id
   ingress_cidr_blocks = ["0.0.0.0/0"]
 
   tags = {
     Terraform = "true"
-    Name= "Deployment5.1-ssh-sg-group"
+    Name      = "Deployment6-ssh-sg-group"
   }
 
 }
 
 #Port 8000 Security group us-west VPC
 module "app_service_sg-west" {
+  providers = {
+    aws = aws.us-west-2
+  }
   source = "terraform-aws-modules/security-group/aws"
 
   name        = "app-service"
@@ -130,16 +146,16 @@ module "app_service_sg-west" {
 resource "aws_instance" "app_server01-east" {
   ami                         = var.ami
   instance_type               = var.instance_type
-  vpc_security_group_ids      = [module.ssh_security_group-east.security_group_id,module.app_service_sg-east.security_group_id]
+  vpc_security_group_ids      = [module.ssh_security_group-east.security_group_id, module.app_service_sg-east.security_group_id]
   subnet_id                   = module.vpc-east.public_subnets[0]
   associate_public_ip_address = true
-  key_name = "pub-instance"
+  key_name                    = "pub-instance"
   #depends_on = [aws_internet_gateway.gw]
 
   user_data = file("user_data.sh")
 
   tags = {
-    Name = "deployment6-appSever"
+    Name = "deployment6-appSever01-east"
   }
 
 }
@@ -147,10 +163,10 @@ resource "aws_instance" "app_server01-east" {
 resource "aws_instance" "app_server02-east" {
   ami                         = var.ami
   instance_type               = var.instance_type
-  vpc_security_group_ids      = [module.ssh_security_group-east.security_group_id,module.app_service_sg-east.security_group_id]
+  vpc_security_group_ids      = [module.ssh_security_group-east.security_group_id, module.app_service_sg-east.security_group_id]
   subnet_id                   = module.vpc-east.public_subnets[1]
   associate_public_ip_address = true
-  key_name = "pub-instance"
+  key_name                    = "pub-instance"
   #depends_on = [aws_internet_gateway.gw]
 
   user_data = file("user_data.sh")
@@ -163,12 +179,13 @@ resource "aws_instance" "app_server02-east" {
 
 #App servers in us-west-2
 resource "aws_instance" "app_server01-west" {
+  provider                    = aws.us-west-2
   ami                         = var.ami
   instance_type               = var.instance_type
-  vpc_security_group_ids      = [module.ssh_security_group-west.security_group_id,module.app_service_sg-west.security_group_id]
+  vpc_security_group_ids      = [module.ssh_security_group-west.security_group_id, module.app_service_sg-west.security_group_id]
   subnet_id                   = module.vpc-west.public_subnets[1]
   associate_public_ip_address = true
-  key_name = "pub-instance"
+  key_name                    = "pub-instance"
   #depends_on = [aws_internet_gateway.gw]
 
   user_data = file("user_data.sh")
@@ -180,12 +197,13 @@ resource "aws_instance" "app_server01-west" {
 }
 
 resource "aws_instance" "app_server02-west" {
+  provider                    = aws.us-west-2
   ami                         = var.ami
   instance_type               = var.instance_type
-  vpc_security_group_ids      = [module.ssh_security_group-west.security_group_id,module.app_service_sg-west.security_group_id]
+  vpc_security_group_ids      = [module.ssh_security_group-west.security_group_id, module.app_service_sg-west.security_group_id]
   subnet_id                   = module.vpc-west.public_subnets[1]
   associate_public_ip_address = true
-  key_name = "pub-instance"
+  key_name                    = "pub-instance"
   #depends_on = [aws_internet_gateway.gw]
 
   user_data = file("user_data.sh")
