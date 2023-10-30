@@ -1,5 +1,9 @@
-variable "access_key" {}
-variable "secret_key" {}
+variable "aws_access_key" {}
+variable "aws_secret_key" {}
 
-variable "ami" {}
-variable "instance_type" {}
+variable "ami" {
+    default = "ami-08c40ec9ead489470"
+}
+variable "instance_type" {
+    default = "t2.micro"
+}
