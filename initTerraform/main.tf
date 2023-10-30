@@ -180,7 +180,7 @@ resource "aws_instance" "app_server02-east" {
 #App servers in us-west-2
 resource "aws_instance" "app_server01-west" {
   provider                    = aws.us-west-2
-  ami                         = var.ami
+  ami                         = var.ami-west
   instance_type               = var.instance_type
   vpc_security_group_ids      = [module.ssh_security_group-west.security_group_id, module.app_service_sg-west.security_group_id]
   subnet_id                   = module.vpc-west.public_subnets[1]
@@ -198,7 +198,7 @@ resource "aws_instance" "app_server01-west" {
 
 resource "aws_instance" "app_server02-west" {
   provider                    = aws.us-west-2
-  ami                         = var.ami
+  ami                         = var.ami-west
   instance_type               = var.instance_type
   vpc_security_group_ids      = [module.ssh_security_group-west.security_group_id, module.app_service_sg-west.security_group_id]
   subnet_id                   = module.vpc-west.public_subnets[1]
