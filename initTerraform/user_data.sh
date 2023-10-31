@@ -13,10 +13,6 @@ sudo apt install -y python3.7-dev
 
 cd /home/ubuntu
 
-git clone https://github.com/bjones519/Kura_C4_D6.git
-
-cd Kura_C4_D6
-
 python3.7 -m venv test
 source test/bin/activate
 git clone https://github.com/bjones519/Kura_C4_D6.git
