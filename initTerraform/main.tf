@@ -277,6 +277,9 @@ module "alb-west" {
           }
         ]
       }
+      stickiness = {
+              enabled  = false
+            }
     }
   }
 }
