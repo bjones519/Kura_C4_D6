@@ -155,7 +155,7 @@ resource "aws_instance" "app_server01-east" {
   user_data = file("user_data.sh")
 
   tags = {
-    Name = "deployment6-appSever01-east"
+    Name = "deployment6-applicationSever01-east"
   }
 
 }
