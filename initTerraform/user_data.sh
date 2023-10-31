@@ -19,6 +19,7 @@ git clone https://github.com/bjones519/Kura_C4_D6.git
 cd Kura_C4_D6
 pip install pip --upgrade
 pip install -r requirements.txt
+pip install mysqlclient
 pip install gunicorn
 python database.py
 sleep 1
