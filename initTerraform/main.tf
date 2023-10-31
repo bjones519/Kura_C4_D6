@@ -244,14 +244,14 @@ module "alb-west" {
 
   target_groups = {
     instance1 = {
-      name_prefix      = "ec2.1-"
+      name_prefix      = "in1-"
       protocol_version = "HTTP1"
       port             = 8000
       target_type      = "instance"
       target_id = aws_instance.app_server01-west.id
     }
     instance2 = {
-      name_prefix      = "ec2.2-"
+      name_prefix      = "in2-"
       protocol_version = "HTTP1"
       port             = 8000
       target_type      = "instance"
