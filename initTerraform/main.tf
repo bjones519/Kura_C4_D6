@@ -246,15 +246,15 @@ module "alb-west" {
   target_groups = {
     instance1 = {
       name_prefix      = "h1"
-      backend_protocol = "HTTP"
-      backend_port     = 8000
+      protocol_version = "HTTP1"
+      port             = 80
       target_type      = "instance"
       target_id = aws_instance.app_server01-west.id
     }
     instance2 = {
       name_prefix      = "h2"
-      backend_protocol = "HTTP"
-      backend_port     = 8000
+      protocol_version = "HTTP1"
+      port             = 80
       target_type      = "instance"
       target_id = aws_instance.app_server02-west.id
     }
