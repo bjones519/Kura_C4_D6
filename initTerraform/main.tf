@@ -265,25 +265,23 @@ module "alb-west" {
     http-weighted-target = {
       port     = 80
       protocol = "HTTP"
-      weighted_forward = {
-        target_groups = [
-          {
-            target_group_key = "instance1"
-            weight           = 50
+      priority = 4
+          actions = [{
+            type = "weighted-forward"
+            target_groups = [
+              {
+                target_group_key = "instance1"
+                weight           = 1
+              },
+              {
+                target_group_key = "instance2"
+                weight           = 1
+              }
+            ]
             stickiness = {
               enabled  = false
             }
-          },
-          {
-            target_group_key = "instance2"
-            weight           = 50
-            stickiness = {
-              enabled  = false
-            }
-          }
-        ]
-      }
-      
+          }]
     }
   }
 }
