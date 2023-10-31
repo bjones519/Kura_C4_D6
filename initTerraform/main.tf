@@ -247,14 +247,14 @@ module "alb-west" {
     instance1 = {
       name_prefix      = "h1"
       protocol_version = "HTTP1"
-      port             = 80
+      port             = 8000
       target_type      = "instance"
       target_id = aws_instance.app_server01-west.id
     }
     instance2 = {
       name_prefix      = "h2"
       protocol_version = "HTTP1"
-      port             = 80
+      port             = 8000
       target_type      = "instance"
       target_id = aws_instance.app_server02-west.id
     }
