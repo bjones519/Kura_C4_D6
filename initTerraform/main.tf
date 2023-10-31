@@ -213,3 +213,68 @@ resource "aws_instance" "app_server02-west" {
   }
 
 }
+
+
+module "alb-west" {
+  providers = {
+    aws = aws.us-west-2
+  }
+  source = "terraform-aws-modules/alb/aws"
+
+  name    = "my-alb-west"
+  vpc_id  = "vpc-065a281089c319ec1"
+  subnets = ["subnet-0a38816d8f123744b", "subnet-0df96a65e46e91634"]
+
+  # Security Group
+  security_group_ingress_rules = {
+    all_http = {
+      from_port   = 80
+      to_port     = 80
+      ip_protocol = "tcp"
+      description = "ALB http traffic"
+      cidr_ipv4   = "0.0.0.0/0"
+    }
+ 
+  }
+  security_group_egress_rules = {
+    all = {
+      ip_protocol = "-1"
+      cidr_ipv4   = "10.0.0.0/16"
+    }
+  }
+
+  target_groups = {
+    instance1 = {
+      name_prefix      = "h1"
+      backend_protocol = "HTTP"
+      backend_port     = 8000
+      target_type      = "instance"
+    }
+    instance2 = {
+      name_prefix      = "h2"
+      backend_protocol = "HTTP"
+      backend_port     = 8000
+      target_type      = "instance"
+    }
+  }
+  
+  listeners = {
+
+    http-weighted-target = {
+      port     = 80
+      protocol = "HTTP"
+      weighted_forward = {
+        target_groups = [
+          {
+            target_group_key = "instance1"
+            weight           = 50
+          },
+          {
+            target_group_key = "instance2"
+            weight           = 50
+          }
+        ]
+      }
+    }
+  }
+}
