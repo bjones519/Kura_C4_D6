@@ -249,12 +249,14 @@ module "alb-west" {
       backend_protocol = "HTTP"
       backend_port     = 8000
       target_type      = "instance"
+      target_id = aws_instance.app_server01-west.id
     }
     instance2 = {
       name_prefix      = "h2"
       backend_protocol = "HTTP"
       backend_port     = 8000
       target_type      = "instance"
+      target_id = aws_instance.app_server02-west.id
     }
   }
   
