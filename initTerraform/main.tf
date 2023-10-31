@@ -215,76 +215,76 @@ resource "aws_instance" "app_server02-west" {
 }
 
 
-module "alb-west" {
-  providers = {
-    aws = aws.us-west-2
-  }
-  source = "terraform-aws-modules/alb/aws"
+# module "alb-west" {
+#   providers = {
+#     aws = aws.us-west-2
+#   }
+#   source = "terraform-aws-modules/alb/aws"
 
-  name    = "my-alb-west"
-  vpc_id  = "vpc-065a281089c319ec1"
-  subnets = ["subnet-0a38816d8f123744b", "subnet-0df96a65e46e91634"]
+#   name    = "my-alb-west"
+#   vpc_id  = "vpc-065a281089c319ec1"
+#   subnets = ["subnet-0a38816d8f123744b", "subnet-0df96a65e46e91634"]
 
-  # Security Group
-  security_group_ingress_rules = {
-    all_http = {
-      from_port   = 80
-      to_port     = 80
-      ip_protocol = "tcp"
-      description = "ALB http traffic"
-      cidr_ipv4   = "0.0.0.0/0"
-    }
+#   # Security Group
+#   security_group_ingress_rules = {
+#     all_http = {
+#       from_port   = 80
+#       to_port     = 80
+#       ip_protocol = "tcp"
+#       description = "ALB http traffic"
+#       cidr_ipv4   = "0.0.0.0/0"
+#     }
  
-  }
-  security_group_egress_rules = {
-    all = {
-      ip_protocol = "-1"
-      cidr_ipv4   = "10.0.0.0/16"
-    }
-  }
+#   }
+#   security_group_egress_rules = {
+#     all = {
+#       ip_protocol = "-1"
+#       cidr_ipv4   = "10.0.0.0/16"
+#     }
+#   }
 
-  target_groups = {
-    instance1 = {
-      name_prefix      = "h1"
-      protocol_version = "HTTP1"
-      port             = 8000
-      target_type      = "instance"
-      target_id = aws_instance.app_server01-west.id
-    }
-    instance2 = {
-      name_prefix      = "h2"
-      protocol_version = "HTTP1"
-      port             = 8000
-      target_type      = "instance"
-      target_id = aws_instance.app_server02-west.id
-    }
-  }
+#   target_groups = {
+#     instance1 = {
+#       name_prefix      = "h1"
+#       protocol_version = "HTTP1"
+#       port             = 8000
+#       target_type      = "instance"
+#       target_id = aws_instance.app_server01-west.id
+#     }
+#     instance2 = {
+#       name_prefix      = "h2"
+#       protocol_version = "HTTP1"
+#       port             = 8000
+#       target_type      = "instance"
+#       target_id = aws_instance.app_server02-west.id
+#     }
+#   }
   
-  listeners = {
+#   listeners = {
 
-    http-weighted-target = {
-      port     = 80
-      protocol = "HTTP"
-      priority = 4
-          actions = [{
-            type = "weighted-forward"
-            target_groups = [
-              {
-                target_group_key = "instance1"
-                weight           = 1
-              },
-              {
-                target_group_key = "instance2"
-                weight           = 1
-              }
-            ]
-            stickiness = {
-              enabled  = false
-            }
-          }]
-    }
-  }
-}
+#     http-weighted-target = {
+#       port     = 80
+#       protocol = "HTTP"
+#       priority = 4
+#           actions = [{
+#             type = "weighted-forward"
+#             target_groups = [
+#               {
+#                 target_group_key = "instance1"
+#                 weight           = 1
+#               },
+#               {
+#                 target_group_key = "instance2"
+#                 weight           = 1
+#               }
+#             ]
+#             stickiness = {
+#               enabled  = false
+#             }
+#           }]
+#     }
+#   }
+# }
 
 
   # target_groups = {
