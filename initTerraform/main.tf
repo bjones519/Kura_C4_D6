@@ -265,61 +265,18 @@ resource "aws_instance" "app_server02-west" {
 #     http-weighted-target = {
 #       port     = 80
 #       protocol = "HTTP"
-#       priority = 4
-#           actions = [{
-#             type = "weighted-forward"
-#             target_groups = [
-#               {
-#                 target_group_key = "instance1"
-#                 weight           = 1
-#               },
-#               {
-#                 target_group_key = "instance2"
-#                 weight           = 1
-#               }
-#             ]
-#             stickiness = {
-#               enabled  = false
-#             }
-#           }]
+#       weighted_forward = {
+#         target_groups = [
+#           {
+#             target_group_key = "instance1"
+#             weight           = 50
+#           },
+#           {
+#             target_group_key = "instance2"
+#             weight           = 50
+#           }
+#         ]
+#       }
 #     }
 #   }
 # }
-
-
-  # target_groups = {
-  #   instance1 = {
-  #     name_prefix      = "h1"
-  #     protocol_version = "HTTP1"
-  #     port             = 8000
-  #     target_type      = "instance"
-  #     target_id = aws_instance.app_server01-west.id
-  #   }
-  #   instance2 = {
-  #     name_prefix      = "h2"
-  #     protocol_version = "HTTP1"
-  #     port             = 8000
-  #     target_type      = "instance"
-  #     target_id = aws_instance.app_server02-west.id
-  #   }
-  # }
-  
-  # listeners = {
-
-  #   http-weighted-target = {
-  #     port     = 80
-  #     protocol = "HTTP"
-  #     weighted_forward = {
-  #       target_groups = [
-  #         {
-  #           target_group_key = "instance1"
-  #           weight           = 50
-  #         },
-  #         {
-  #           target_group_key = "instance2"
-  #           weight           = 50
-  #         }
-  #       ]
-  #     }
-  #   }
-  # }
