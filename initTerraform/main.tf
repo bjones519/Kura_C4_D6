@@ -270,16 +270,20 @@ module "alb-west" {
           {
             target_group_key = "instance1"
             weight           = 50
+            stickiness = {
+              enabled  = false
+            }
           },
           {
             target_group_key = "instance2"
             weight           = 50
+            stickiness = {
+              enabled  = false
+            }
           }
         ]
       }
-      stickiness = {
-              enabled  = false
-            }
+      
     }
   }
 }
